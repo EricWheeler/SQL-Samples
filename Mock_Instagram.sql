@@ -61,7 +61,7 @@ CREATE TABLE photo_tags (
     PRIMARY KEY(photo_id, tag_id)
 );
 
-# I then inserted thousands of rows of sample data into the tables. A snippet of the data can be seen here
+-- I then inserted thousands of rows of sample data into the tables. A snippet of the data can be seen here
 
 INSERT INTO users (username, created_at) VALUES ('Kenton_Kirlin', '2017-02-16 18:22:10.846'), ('Andre_Purdy85', '2017-04-02 17:11:21.417'), ('Harley_Lind18', '2017-02-21 11:12:32.574'), ('Arely_Bogan63', '2016-08-13 01:28:43.085'), ('Aniya_Hackett', '2016-12-07 01:04:39.298'), ('Travon.Waters', '2017-04-30 13:26:14.496'), ('Kasandra_Homenick', '2016-12-12 06:50:07.996'), ('Tabitha_Schamberger11', '2016-08-20 02:19:45.512'), ('Gus93', '2016-06-24 19:36:30.978'), ('Presley_McClure', '2016-08-07 16:25:48.561'), ('Justina.Gaylord27', '2017-05-04 16:32:15.577')
 INSERT INTO photos(image_url, user_id) VALUES ('http://elijah.biz', 1), ('https://shanon.org', 1), ('http://vicky.biz', 1), ('http://oleta.net', 1), ('https://jennings.biz', 1), ('https://quinn.biz', 2), ('https://selina.name', 2), ('http://malvina.org', 2), ('https://branson.biz', 2), ('https://elenor.name', 3), ('https://marcelino.com', 3), ('http://felicity.name', 3), ('https://fred.com', 3), ('https://gerhard.biz', 4), ('https://sherwood.net', 4), ('https://maudie.org', 4), ('http://annamae.name', 6), ('https://mac.org', 6), ('http://miracle.info', 6), ('http://emmet.com', 6), ('https://lisa.com', 6), ('https://brooklyn.name', 8), ('http://madison.net', 8), ('http://annie.name', 8), ('http://darron.info', 8)
@@ -73,17 +73,17 @@ INSERT INTO photo_tags(photo_id, tag_id) VALUES (1, 18), (1, 17), (1, 21), (1, 1
 
 
 
-# Here are some sample queries that show my understanding of aggregate functions, joins, subqueries, and aliasing. 
+-- Here are some sample queries that cover aggregate functions, joins, subqueries, and aliasing. 
 
 
-#Finding the 5 oldest users
+-- Finding the 5 oldest users
 SELECT * 
 FROM users 
 ORDER BY created_at
 LIMIT 5;
 
 
-#The most popular registration date
+-- The most popular registration date
 SELECT  DATE_FORMAT(created_at,'%W') AS day,
         COUNT(*) AS total
 FROM users
@@ -92,7 +92,7 @@ ORDER BY total DESC
 LIMIT 2;
 
 
-#Identify inactive users (users with no photos)
+-- Identify inactive users (users with no photos)
 SELECT  users.id,
         username
 FROM users 
@@ -101,7 +101,7 @@ LEFT JOIN photos
 WHERE photos.id IS NULL;
 
 
-#Identify the most popular photo and user who created it
+-- Identify the most popular photo and user who created it
 SELECT  users.user_id,
         username,
         photos.id,
@@ -116,13 +116,13 @@ GROUP BY photos.id
 ORDER BY total DESC 
 LIMIT 1;
 
-#Calculate the average number of photos per user
+-- Calculate the average number of photos per user
 SELECT (SELECT COUNT(*) 
         FROM photos) / (SELECT COUNT(*) 
                         FROM users) AS avg;
 
 
-#Find the five most popular hashtags
+-- Find the five most popular hashtags
  SELECT photo_tags.tag_id,
         tags.tag_name,
         COUNT(*) AS total
@@ -134,7 +134,7 @@ ORDER BY total DESC
 LIMIT 5;
 
 
-#Find any bots (users who have liked every single photo)
+-- Find any bots (users who have liked every single photo)
 SELECT  user_id,
         username,
         COUNT(*) AS total_likes
