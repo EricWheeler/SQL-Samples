@@ -1,4 +1,4 @@
-# In this project I created a mock instagram schema. The queries below show my understanding of creating tables and linking tables with primary and foreign keys.
+-- In this project I created a mock instagram schema. The queries below show the process of creating tables and linking tables with primary and foreign keys.
 
 
 DROP DATABASE IF EXISTS instagram;
