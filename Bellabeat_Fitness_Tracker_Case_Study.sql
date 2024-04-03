@@ -24,8 +24,7 @@ FROM
   `tidy-way-285818.bellabeat_case_study.day_sleep_2`
 
 
-
--- Create a table that joins daily activity data with daily sleep data
+-- Create a table that joins all daily activity data with all daily sleep data
 CREATE TABLE `tidy-way-285818.bellabeat_case_study.full_daily_table` AS
 SELECT  CAST(activity.Id AS NUMERIC) AS Id,
         activity.ActivityDate,
@@ -44,7 +43,7 @@ FROM `tidy-way-285818.bellabeat_case_study.daily_activity_total` AS activity
 LEFT JOIN `tidy-way-285818.bellabeat_case_study.day_sleep_total` AS sleep
 ON activity.Id = sleep.Id
 AND activity.ActivityDate = sleep.SleepDay
-
+  
 
 -- Create a table that joins 3 tables to retrieve hourly data on calories, intensities, and steps.
 CREATE TABLE `tidy-way-285818.bellabeat_case_study.full_hourly_table` AS
