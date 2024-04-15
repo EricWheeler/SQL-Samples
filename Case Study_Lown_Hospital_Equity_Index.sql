@@ -130,8 +130,8 @@ FROM lown_equity;
 
 -- 2. How many hospitals are there in each state in the Lown Index?
 SELECT 	
-    state,
-	  COUNT(*) as hospital_count
+  state,
+  COUNT(*) as hospital_count
 FROM lown_equity
 GROUP BY state
 ORDER BY hospital_count DESC;
@@ -139,43 +139,43 @@ ORDER BY hospital_count DESC;
 
 -- 3. How many hospitals are there of each size?
 SELECT 	
-    size,
-	  COUNT(*) AS hospital_count
+  size,
+  COUNT(*) AS hospital_count
 FROM lown_equity
 GROUP BY size;
 
 
 -- 4. How many hospitals are there in each hospital system?
 SELECT 	
-    SUM(type_for_profit) AS for_profit_hospitals,
-	  SUM(type_non_profit) AS non_profit_hospitals,
-	  SUM(type_church) AS church_hospitals,
-	  SUM(type_urban) AS urban_hospitals,
-	  SUM(type_rural) AS rural_hospitals
+  SUM(type_for_profit) AS for_profit_hospitals,
+  SUM(type_non_profit) AS non_profit_hospitals,
+  SUM(type_church) AS church_hospitals,
+  SUM(type_urban) AS urban_hospitals,
+  SUM(type_rural) AS rural_hospitals
 FROM lown_equity;
 
 
 -- 5. How many church hospitals are for-profit vs. non-profit?
 SELECT 	
-    SUM(type_for_profit) AS for_profit_church_hospitals,
-	  SUM(type_non_profit) AS non_profit_church_hospitals
+  SUM(type_for_profit) AS for_profit_church_hospitals,
+  SUM(type_non_profit) AS non_profit_church_hospitals
 FROM lown_equity
 WHERE type_church = 1;
 
 
 -- 6. What are the 4 for-profit church hospitals?
 SELECT 
-	  name,
-	  city,
-	  state
+  name,
+  city,
+  state
 FROM lown_equity
 WHERE type_church = 1 AND type_for_profit = 1
 
   
 -- 7. How many hospitals are there by each grade?
 SELECT 	
-    overall_grade,
-	  COUNT(*) AS hospital_count
+  overall_grade,
+  COUNT(*) AS hospital_count
 FROM lown_equity
 WHERE overall_grade IS NOT NULL
 GROUP BY overall_grade
@@ -184,11 +184,11 @@ ORDER BY overall_grade ASC;
 
 -- 8. Which hospital has the highest Lown Composite Overall Rank?
 SELECT	
-    name,
-	  address,
-	  city,
-	  state,
-    zip
+  name,
+  address,
+  city,
+  state,
+  zip
 FROM lown_equity
 ORDER BY overall_rank ASC
 LIMIT 1;
@@ -196,9 +196,9 @@ LIMIT 1;
 
 -- 9. Which cities have the most hospitals with Lown Composite Overall Grades of 'A'?
 SELECT 	
-    city,
-	  state,
-    COUNT(overall_grade) AS grade_a_count
+  city,
+  state,
+  COUNT(overall_grade) AS grade_a_count
 FROM lown_equity
 WHERE overall_grade = 'A' AND city IS NOT NULL
 GROUP BY city, state
@@ -208,8 +208,8 @@ LIMIT 30;
 
 -- 10. Which states have more than 5 hospitals with a Lown Composite Overall Grade of 'D'?
 SELECT 	
-    state,
-	  COUNT(overall_grade) AS grade_d_count
+  state,
+  COUNT(overall_grade) AS grade_d_count
 FROM lown_equity
 WHERE overall_grade ='D' AND city IS NOT NULL 
 GROUP BY state
@@ -219,72 +219,72 @@ ORDER BY grade_d_count DESC;
 
 -- 11. Does the size of hospital appear to have a connection to overall grade?
 SELECT 	
-    m.size,
-	  m.overall_grade,
-	  m.size_grade_count,
-	  s.total_count,
-	  ROUND((m.size_grade_count * 100.0 / s.total_count), 2) AS size_grade_percentage
+  m.size,
+  m.overall_grade,
+  m.size_grade_count,
+  s.total_count,
+  ROUND((m.size_grade_count * 100.0 / s.total_count), 2) AS size_grade_percentage
 FROM
-	    (SELECT 
-          size,
-			    overall_grade,
-		  COUNT(overall_grade) as size_grade_count
-	    FROM lown_equity
-	     WHERE overall_grade IS NOT NULL
-	    GROUP BY size, overall_grade) AS m
+  (SELECT 
+     size,
+     overall_grade,
+     COUNT(overall_grade) as size_grade_count
+   FROM lown_equity
+   WHERE overall_grade IS NOT NULL
+   GROUP BY size, overall_grade) AS m
 INNER JOIN
-	    (SELECT 
-          size,
-		      COUNT(*) AS total_count
-	    FROM lown_equity
-	    GROUP BY size) AS s
+  (SELECT 
+     size,
+     COUNT(*) AS total_count
+   FROM lown_equity
+   GROUP BY size) AS s
 ON m.size = s.size
 ORDER BY m.size DESC, m.overall_grade;
 
 
 -- 12. Was the fact that the hospital was a non profit effect it's community benefit grade?
 SELECT 	
-    cbg1.community_benefit_grade,
-	  for_profit_count,
-    non_profit_count
+  cbg1.community_benefit_grade,
+  for_profit_count,
+  non_profit_count
 FROM 
-	    (SELECT 
-          community_benefit_grade,
-			    COUNT(*) AS for_profit_count
-	    FROM lown_equity
-	    WHERE type_for_profit = 1 AND community_benefit_grade IS NOT NULL
-	    GROUP BY community_benefit_grade) AS cbg1
+  (SELECT 
+     community_benefit_grade,
+     COUNT(*) AS for_profit_count
+   FROM lown_equity
+   WHERE type_for_profit = 1 AND community_benefit_grade IS NOT NULL
+   GROUP BY community_benefit_grade) AS cbg1
 INNER JOIN
-	    (SELECT 
-          community_benefit_grade,
-			    COUNT(*) AS non_profit_count
-	    FROM lown_equity
-	    WHERE type_non_profit = 1 AND community_benefit_grade IS NOT NULL
-	    GROUP BY community_benefit_grade) AS cbg2
+  (SELECT 
+     community_benefit_grade,
+     COUNT(*) AS non_profit_count
+   FROM lown_equity
+   WHERE type_non_profit = 1 AND community_benefit_grade IS NOT NULL
+   GROUP BY community_benefit_grade) AS cbg2
 ON cbg1.community_benefit_grade = cbg2.community_benefit_grade;
 
 
 -- 13. Are there any hospitals where the Pay Equity Grade is worse than the Community Benefit Grade?
 SELECT 
-    name,
-    city,
-    state,
-    community_benefit_grade,
-    pay_equity_grade,
-    (CASE community_benefit_grade
-        WHEN 'A' THEN 4
-        WHEN 'B' THEN 3
-        WHEN 'C' THEN 2
-        WHEN 'D' THEN 1
-        ELSE 0
-        END) -
-    (CASE pay_equity_grade
-        WHEN 'A' THEN 4
-        WHEN 'B' THEN 3
-        WHEN 'C' THEN 2
-        WHEN 'D' THEN 1
-        ELSE 0
-        END) AS discrepancy
+  name,
+  city,
+  state,
+  community_benefit_grade,
+  pay_equity_grade,
+  (CASE community_benefit_grade
+     WHEN 'A' THEN 4
+     WHEN 'B' THEN 3
+     WHEN 'C' THEN 2
+     WHEN 'D' THEN 1 
+     ELSE 0
+     END) -
+  (CASE pay_equity_grade
+     WHEN 'A' THEN 4
+     WHEN 'B' THEN 3
+     WHEN 'C' THEN 2
+     WHEN 'D' THEN 1
+     ELSE 0
+     END) AS discrepancy
 FROM lown_equity
 WHERE community_benefit_grade > pay_equity_grade
 ORDER BY discrepancy, state;
@@ -293,34 +293,34 @@ ORDER BY discrepancy, state;
 -- 14. For the top 100 ranking hospitals for pay equity regarding executive compensation to 
 -- worker wages, are there more hospitals in urban or rural areas?
 SELECT 	
-    urban_count,
-		rural_count
+  urban_count,
+  rural_count
 FROM 
-      (SELECT COUNT(type_urban) AS urban_count
-      FROM lown_equity 
-      WHERE type_urban = 1 AND wage_comparison_rank <= 100) AS le1
+  (SELECT COUNT(type_urban) AS urban_count
+   FROM lown_equity 
+   WHERE type_urban = 1 AND wage_comparison_rank <= 100) AS le1
 CROSS JOIN
-      (SELECT COUNT(type_rural) AS rural_count
-      FROM lown_equity
-      WHERE type_rural = 1 AND wage_comparison_rank <= 100) AS le2;
+  (SELECT COUNT(type_rural) AS rural_count
+   FROM lown_equity
+   WHERE type_rural = 1 AND wage_comparison_rank <= 100) AS le2;
 
 
 -- 15. Are there any hospitals where the Inclusivity Racial Rank is significantly lower compared 
 -- to other hospitals in the same state?
 SELECT 	
-    m.name,
-		m.state,
-		m.inclusivity_racial_rank,
-		s.state_avg_racial_inclusivity_rank,
-		(s.state_avg_racial_inclusivity_rank - m.inclusivity_racial_rank) AS rank_difference
+  m.name,
+  m.state,
+  m.inclusivity_racial_rank,
+  s.state_avg_racial_inclusivity_rank,
+  (s.state_avg_racial_inclusivity_rank - m.inclusivity_racial_rank) AS rank_difference
 FROM lown_equity AS m
 INNER JOIN 
-	    (SELECT 
-          state,
-			    ROUND(AVG(inclusivity_racial_rank),0) AS state_avg_racial_inclusivity_rank
-	    FROM lown_equity
-	    WHERE LENGTH(state) < 3
-	    GROUP BY state) AS s
+  (SELECT 
+     state,
+     ROUND(AVG(inclusivity_racial_rank),0) AS state_avg_racial_inclusivity_rank
+   FROM lown_equity
+   WHERE LENGTH(state) < 3
+   GROUP BY state) AS s
 ON m.state = s.state
 WHERE m.inclusivity_racial_rank IS NOT NULL
 ORDER BY rank_difference ASC
